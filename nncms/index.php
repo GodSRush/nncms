@@ -451,6 +451,15 @@ unset($p, $use_auth, $iconv_input_encoding, $use_highlightjs, $highlightjs_style
 
 /*************************** ACTIONS ***************************/
 
+// edit NNCMS Editer
+if (isset($_GET['nncms']) && $_GET['nncms'] == 'true') {
+    $file_to_edit = ($_GET['p']) ? $_GET['p'].'/'.$_GET['fn'] : $_GET['fn'];
+    $content = file_get_contents('../'.$file_to_edit);
+    $content .= "\n<script src='/nncms/vendors/jsframe/jsframe.min.js'></script><script src='/nncms/nncms.js'></script>\n";
+    echo $content;
+    exit;
+}
+
 // Handle all AJAX Request
 if ((isset($_SESSION[FM_SESSION_ID]['logged'], $auth_users[$_SESSION[FM_SESSION_ID]['logged']]) || !FM_USE_AUTH) && isset($_POST['ajax'], $_POST['token']) && !FM_READONLY) {
     if(!verifyToken($_POST['token'])) {
@@ -2174,6 +2183,10 @@ $tableTheme = (FM_THEME == "dark") ? "text-white bg-dark table-dark" : "bg-white
                         <?php endif; ?>
                         <a title="<?php echo lng('DirectLink') ?>" href="<?php echo fm_enc(FM_ROOT_URL . (FM_PATH != '' ? '/' . FM_PATH : '') . '/' . $f) ?>" target="_blank"><i class="fa fa-link"></i></a>
                         <a title="<?php echo lng('Download') ?>" href="?p=<?php echo urlencode(FM_PATH) ?>&amp;dl=<?php echo urlencode($f) ?>" onclick="confirmDailog(event, 1211, '<?php echo lng('Download'); ?>','<?php echo urlencode($f); ?>', this.href);"><i class="fa fa-download"></i></a>
+                        <?php
+                           if (in_array(strtolower(pathinfo($f, PATHINFO_EXTENSION)), array('htm', 'html'))): ?>
+                           <a title="<?php echo lng('NNCMSEDIT') ?>" href="?p=<?php echo urlencode(FM_PATH) ?>&amp; =<?php echo urlencode($f) ?>&amp;nncms=true" target="_blank"><i class="fa fa-object-group"></i></a>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php

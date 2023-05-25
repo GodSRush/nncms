@@ -1,8 +1,3 @@
-// jsFrameのJS読み込み
-var script = document.createElement('script');
-script.src = "/nncms/vendors/jsframe/jsframe.min.js";
-document.head.appendChild(script);
-
 document.addEventListener('DOMContentLoaded', function() {
     // スタイルシート定義
     var style = document.createElement('style');
