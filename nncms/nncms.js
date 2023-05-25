@@ -21,74 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     .nn_win_box {
     padding: 10px;
-    font-size: 16px;
+    font-size: 14px;
     }
     `;
     document.body.appendChild(style);
-
-    // 全HTML要素にdata-nnnoを追加
-    var count = 0;
-    function addDataAttribute(element) {
-        if (element.nodeName != 'BR') {
-            element.dataset.nnno = 'custom-value-' + count;
-            count ++;
-        }
-        var children = element.children;
-        for (var i = 0; i < children.length; i++) {
-            addDataAttribute(children[i]);
-        }
-    }
-    var allElements = document.querySelectorAll('body *');
-    for (var i = 0; i < allElements.length; i++) {
-        addDataAttribute(allElements[i]);
-    }
-
-    // p, h1, h2, h3, h4, h5, spanにテキストエディット用イベント追加
-    function addEditText(element) {
-        console.log(element);
-
-        if (!element.length) {
-            console.log('SET:'+element);
-            element.addEventListener('mouseover', pOver, false);
-        } else {
-            var children = element.children;
-            console.log('IN:'+children[j]);
-            for (var j = 0; j < children.length; j++) {
-                addEditText(children[j]);
-            }
-        }
-    }
-    var items = document.querySelectorAll('p, h1, h2, h3, h4, h5, span');
-    for (var i = 0; i < items.length; i++) {
-        if (!items[i].children.length) {
-            items[i].addEventListener('mouseover', pOver, false);
-        } else {
-            var child = items[i].children;
-            for (var j = 0; j < child.length; j++) {
-                var ng = 0;
-                console.log(child[j].children);
-                if (child[j].tagName != 'A' && child[j].tagName != 'BR' && child[j].tagName != 'SPAN') {
-                    ng = 1;
-                } else {
-                    var child2 = child[j].children;
-                    for (var jj = 0; jj < child2.length; jj++) {
-                        if (child2[jj].tagName != 'A' && child2[jj].tagName != 'BR' && child2[jj].tagName != 'SPAN') {
-                            ng = 1;
-                        }
-                    }
-                }
-            }
-            if (!ng) {
-                items[i].addEventListener('mouseover', pOver, false);
-            }
-        }
-    }
-
-    // Aタグを無効化
-    var items = document.querySelectorAll('a');
-    for (var i = 0; i < items.length; i++) {
-        items[i].removeAttribute('href');
-    }
 
     // Frame設定
     const jsFrame = new JSFrame();
@@ -123,6 +59,80 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     var elm = document.getElementById(frame.htmlElement.parent.htmlElement.parent.parentCanvas.parentElement.id);
     elm.style.zIndex = 99999;
+    var frame_id = elm.id;
+
+    // 全HTML要素にdata-nnnoを追加
+    var count = 0;
+    function addDataAttribute(element) {
+        if (element.nodeName != 'BR') {
+            element.dataset.nnno = 'custom-value-' + count;
+            count ++;
+        }
+        var children = element.children;
+        for (var i = 0; i < children.length; i++) {
+            addDataAttribute(children[i]);
+        }
+    }
+    var allElements = document.querySelectorAll('body *');
+    for (var i = 0; i < allElements.length; i++) {
+        addDataAttribute(allElements[i]);
+    }
+
+    // p, h1, h2, h3, h4, h5, spanにテキストエディット用イベント追加
+    function addEditText(element) {
+        // console.log(element);
+
+        if (!element.length) {
+            // console.log('SET:'+element);
+            element.addEventListener('mouseover', pOver, false);
+        } else {
+            var children = element.children;
+            // console.log('IN:'+children[j]);
+            for (var j = 0; j < children.length; j++) {
+                addEditText(children[j]);
+            }
+        }
+    }
+    // document.body.addEventListener('mouseover', function(e) {
+    //     var target = e.target;
+    //     if (!target.closest('#'+frame_id) && !target.closest('#nn_edit') && target.matches('p, h1, h2, h3, h4, h5, span, a')) {
+    //         pOver(e);
+    //     }
+    // }, false);
+
+    var items = document.querySelectorAll('p, h1, h2, h3, h4, h5, span, a');
+    for (var i = 0; i < items.length; i++) {
+        if (!items[i].children.length && !items[i].closest('#'+frame_id) && !items[i].closest('#nn_edit')) {
+            items[i].addEventListener('mouseover', pOver, false);
+        } else {
+            var child = items[i].children;
+            for (var j = 0; j < child.length; j++) {
+                var ng = 0;
+                console.log(child[j].children);
+                if (child[j].tagName != 'A' && child[j].tagName != 'BR' && child[j].tagName != 'SPAN') {
+                    ng = 1;
+                } else {
+                    var child2 = child[j].children;
+                    for (var jj = 0; jj < child2.length; jj++) {
+                        if (child2[jj].tagName != 'A' && child2[jj].tagName != 'BR' && child2[jj].tagName != 'SPAN') {
+                            ng = 1;
+                        }
+                    }
+                }
+            }
+            if (!ng) {
+                items[i].addEventListener('mouseover', pOver, false);
+            }
+        }
+    }
+
+    // Aタグを無効化
+    var items = document.querySelectorAll('a');
+    for (var i = 0; i < items.length; i++) {
+        if (!items[i].closest('#'+frame_id)) {
+            items[i].removeAttribute('href');
+        }
+    }
 });
 
 function pOver(e) {
@@ -211,20 +221,4 @@ function nn_menu_cancel(elm) {
     document.getElementById('nn_win_default').style.display = 'block';
     document.getElementById('nn_win_pedit').style.display = 'none';
     delete document.getElementById('nn_win_pedit').dataset.editon;
-}
-
-// 未使用
-function get_doctype() {
-  let doctype = "";
-  if(document.doctype){
-    doctype += "<!DOCTYPE HTML";
-    if(document.doctype.publicId){
-      doctype += ' PUBLIC "'+document.doctype.publicId+'"';
-    }
-    if(document.doctype.systemId){
-      doctype += ' "'+document.doctype.systemId+'"';
-    }
-    doctype += ">";
-  }
-  return doctype;
 }
